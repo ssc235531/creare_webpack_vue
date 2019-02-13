@@ -1,21 +1,23 @@
-// 引入依赖模块
-var path = require('path');
+// 基础配置文件
+
+// 引入依赖
+
+var path = require("path");
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 
 module.exports = {
-    // 入口文件，路径相对于本文件所在的位置，可以写成字符串、数组、对象
-    entry: {
+    // 入口文件 路径相对于本文件所在的位置，可以写成字符串、数组、对象
+    entry:{
         // path.resolve([from ...], to) 将to参数解析为绝对路径
-        index:path.resolve(__dirname, '../src/entry/index.js'),
+        index: path.resolve(__dirname,'../src/entry/index.js'),
         // 需要被提取为公共模块的群组
-        vendors:['vue','vue-router','jquery'],
+        vendors:['vue','vue-router','jquery']
     },
-
-    // 输出配置
-    output: {
+    output:{
         // 输出文件，路径相对于本文件所在的位置
-        path: path.resolve(__dirname, '../output/static/js/'),
+        path: path.resolve(__dirname,'../output/static/js/'),
 
         // 设置publicPath这个属性会出现很多问题：
         // 1.可以看成输出文件的另一种路径，差别路径是相对于生成的html文件；
@@ -25,26 +27,34 @@ module.exports = {
 
         // 基于文件的md5生成Hash名称的script来防止缓存
         filename: '[name].[hash].js',
+
         // 非主入口的文件名，即未被列在entry中，却又需要被打包出来的文件命名配置
         chunkFilename: '[id].[chunkhash].js'
     },
-
     // 其他解决方案
-    resolve: {
+    resolve:{
         // require时省略的扩展名，遇到.vue结尾的也要去加载
-        extensions: ['','.js', '.vue'],
+        extensions: ['','.js','.vue'],
+
         // 模块别名地址，方便后续直接引用别名，无须写长长的地址，注意如果后续不能识别该别名，需要先设置root
-        alias:{}
+        alias:{
+
+        }
+    },
+    // 不进行打包的模块
+    externals:{
+
     },
 
-    // 不进行打包的模块
-    externals:{},
-
     // 模块加载器
-    module: {
-        // loader相当于gulp里的task，用来处理在入口文件中require的和其他方式引用进来的文件，test是正则表达式，匹配要处理的文件；loader匹配要使用的loader，"-loader"可以省略；include把要处理的目录包括进来，exclude排除不处理的目录
-        loaders: [
-            //  使用vue-loader 加载 .vue 结尾的文件
+    module:{
+        // loader 相当于gulp里面的task,用来处理入口文件require的和其他方式引用进来的文件
+        // test 是正则表达式，匹配要处理的文件
+        // loader匹配要使用的loader，"-loader"可以省略；
+        // include把要处理的目录包括进来
+        // exclude排除不处理的目录
+        loaders:[
+            // 使用vue-loader 加载.vue结尾的文件
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -56,17 +66,18 @@ module.exports = {
                 loader: 'babel',
                 exclude: /node_modules/,
                 query:{
-                    presets: ['es2015', 'stage-0'],
-                    plugins: ['transform-runtime']
+                    presets:['es2015','stage-0'],
+                    plugins:['transform-runtime']
                 }
             },
             // 使用css-loader和style-loader 加载 .css 结尾的文件
             {
-                test: /\.css$/,
+                test:/\.css$/,
                 // 将样式抽取出来为独立的文件
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!autoprefixer-loader"),
+                loader: ExtractTextPlugin.extract("style-loader","css-loader!autoprefixer-loader"),
                 exclude: /node_modules/
             },
+
             // 使用less-loader、css-loader和style-loade 加载 .less 结尾的文件
             {
                 test: /\.less$/,
@@ -78,27 +89,27 @@ module.exports = {
             {
                 test: /\.(png|jpg|gif)$/,
                 loader: 'url-loader',
-                query: {
+                query:{
                     // 把较小的图片转换成base64的字符串内嵌在生成的js文件里
                     limit: 10000,
                     // 路径要与当前配置文件下的publicPath相结合
-                    name:'../img/[name].[ext]?[hash:7]'
+                    name: '../img/[name].[ext]?[hash:7]'
                 }
             },
             // 加载图标
             {
                 test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
                 loader: 'file-loader',
-                query: {
+                query:{
                     // 把较小的图标转换成base64的字符串内嵌在生成的js文件里
                     limit: 10000,
                     name:'../fonts/[name].[ext]?[hash:7]',
-                    prefix:'font'
+                    prefix: 'font'
                 }
-            },
+            }
         ]
     },
 
     // 配置插件项
-    plugins: []
-}
+    plugins:[]
+};
